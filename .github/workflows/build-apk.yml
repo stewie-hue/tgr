@@ -8,6 +8,9 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      ANDROID_HOME: /usr/local/lib/android/sdk
+      ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -17,12 +20,16 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-      - uses: android-actions/setup-android@v3
-      - name: Accept licences and install required SDK packages
+      # GitHub's Ubuntu runner already includes the Android SDK. Do not invoke
+      # android-actions/setup-android@v3: its default package list requests the
+      # obsolete SDK package named "tools" and fails before the build starts.
+      - name: Verify preinstalled Android SDK
         shell: bash
         run: |
-          yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+          set -euo pipefail
+          test -d "$ANDROID_HOME/platforms/android-35" || { echo "Android platform 35 is missing from the runner SDK."; ls -la "$ANDROID_HOME/platforms" || true; exit 1; }
+          test -x "$ANDROID_HOME/build-tools/35.0.0/aapt" || { echo "Android build-tools 35.0.0 are missing from the runner SDK."; ls -la "$ANDROID_HOME/build-tools" || true; exit 1; }
+          echo "Android SDK platform 35 and build-tools 35.0.0 are available."
       - name: Build debug APK
         run: gradle --no-daemon assembleDebug
       - uses: actions/upload-artifact@v4

@@ -19,16 +19,14 @@ jobs:
           gradle-version: '8.9'
       - uses: android-actions/setup-android@v3
         with:
-          # Avoid the action's legacy default package "tools", which sdkmanager no longer provides.
-          packages: |
-            platform-tools
-            platforms;android-35
-            build-tools;35.0.0
+          # Package names must be space-separated; commas/newlines can be passed as literal package text.
+          packages: platform-tools platforms;android-35 build-tools;35.0.0
           accept-android-sdk-licenses: true
-      - name: Install Android SDK packages
+      - name: Accept SDK licences and verify packages
+        shell: bash
         run: |
-          yes | sdkmanager --licenses || true
-          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager --list_installed
       - name: Build debug APK
         run: gradle --no-daemon assembleDebug
       - uses: actions/upload-artifact@v4

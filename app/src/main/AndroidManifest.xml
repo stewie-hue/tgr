@@ -1,17 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <application
-        android:allowBackup="false"
-        android:label="TGram Reborn"
-        android:theme="@android:style/Theme.Material.NoActionBar"
-        android:usesCleartextTraffic="false">
+    <queries><package android:name="org.telegram.messenger" /></queries>
+    <application android:allowBackup="false" android:label="TGram Reborn" android:theme="@android:style/Theme.Material.NoActionBar" android:usesCleartextTraffic="false">
         <meta-data android:name="xposedmodule" android:value="true" />
-        <meta-data android:name="xposeddescription" android:value="TGram Reborn: Telegram client compatibility diagnostics and safe customization foundation." />
+        <meta-data android:name="xposeddescription" android:value="TGram Reborn: Telegram scope declaration, load diagnostics, and safe customization foundation." />
         <meta-data android:name="xposedminversion" android:value="82" />
-        <activity android:name=".MainActivity" android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter></activity>
     </application>
 </manifest>

@@ -1,27 +1,19 @@
-# TGram Reborn — Module Integration Alpha
+# TGram Reborn — Alpha
 
-TGram Reborn 2.1.0-alpha1 combines the existing dark dashboard with a real classic-Xposed module entry point. It is intended for LSPosed installations that support the legacy Xposed API.
+An independent Android/legacy-Xposed module reconstruction. Original project credit: TGramHooks by Simo. Preserve applicable upstream notices/licensing when distributing derivative work.
 
-## What is implemented
-- `assets/xposed_init` points to `dev.tgram.reborn.HookInit`.
-- Android manifest includes Xposed module metadata.
-- `HookInit` implements `IXposedHookLoadPackage` and logs when one of the listed Telegram-family clients loads.
-- Client package names are based partly on strings observed in the supplied TGramHooks v1.3.5 APK; the list is not a guarantee of compatibility.
-- Existing dashboard and local diagnostics are retained.
+## Included
+- LSPosed/Xposed module metadata and `assets/xposed_init` entry point.
+- `assets/xposed_scope` requests `org.telegram.messenger` as a target package.
+- Dark scope-style app UI with search, requested-package indicators, diagnostics, and a locally saved preference.
+- Minimal hook confirms when the Telegram process loads by writing a message to the Xposed log.
+- GitHub Actions workflow builds a debug APK and uploads it as an artifact.
 
-## Important limitations
-This alpha is a **diagnostic-only integration**, not a full recreation of TGramHooks. It does not hook or change Telegram UI/behavior and does not report live activation inside the dashboard. Verify loading in LSPosed and inspect its logs. No APK was built or runtime-tested in this environment because Android Gradle/SDK tooling is unavailable here; use the GitHub Actions workflow to build it.
+## Honest limitations
+This alpha does **not** recreate the original TGramHooks feature set. Its working module function is Telegram process-load diagnostics. The app UI cannot change LSPosed's actual scope checkboxes; the module declares Telegram in `assets/xposed_scope`, and the user should verify/enable it in LSPosed Manager. The local verbose preference currently affects only app settings storage, not the Xposed logger. No Premium entitlement spoofing, screenshot restriction bypass, or protected-media extraction is implemented.
 
-The original public repository identifies TGramHooks as MIT-licensed and credits Simo. This is an independent reconstruction; original hook implementation is not copied into this project. Credits to the original project and developer are retained in the app UI.
+## Build
+Use GitHub Actions → **Build TGram Reborn APK** → Run workflow. The workflow installs SDK packages through separate quoted `sdkmanager` arguments to avoid the previous malformed combined-package error. Download `tgram-reborn-debug-apk` from the completed workflow run.
 
-## Build from a phone using GitHub
-1. Extract this ZIP.
-2. Upload the **contents** of the `TGram-Reborn-Module` folder to the root of a GitHub repository.
-3. Open **Actions** → **Build TGram Reborn APK** → **Run workflow**.
-4. Download the `tgram-reborn-debug-apk` artifact after the workflow succeeds.
-5. Install `app-debug.apk`, then enable TGram Reborn in LSPosed.
-6. Select the Telegram-family app you want to test in the LSPosed scope, force-stop it, and relaunch it.
-7. Check LSPosed logs for `[TGram Reborn] Module loaded for ...`.
-
-## Next development stage
-After verifying this diagnostic entry point loads correctly on the user's phone, add only explicitly supported, benign UI customizations and make dashboard diagnostics reflect verified status. Do not treat the existence of the entry point as proof that any functional hooks are implemented.
+## Scope
+Requested target: `org.telegram.messenger` (official Telegram Android package). LSPosed remains the source of truth for whether the module is enabled for that package.
